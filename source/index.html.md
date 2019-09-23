@@ -2,14 +2,7 @@
 title: API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
-  - shell
-  - ruby
-  - python
-  - javascript
-
-toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/lord/slate'>Documentation Powered by Slate</a>
+  - json
 
 includes:
   - errors
@@ -19,221 +12,1792 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
-
-We have language bindings in Shell, Ruby, Python, and JavaScript! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](https://github.com/lord/slate). Feel free to edit it and use it as a base for your own API's documentation.
+Welcome to the DentalMock API!
 
 # Authentication
 
-> To authorize, use this code:
+DentalMock uses JWT tokens provided by AWS Cognito to allow access to the API.
+Place the token in the Authorization header in order to ensure authentication.
 
-```ruby
-require 'kittn'
+Endpoints that include sensitive data have include additional authorization
+that is marked in the docs. 
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
+`Administrator` authentication means that the JWT token must have the user in
+thea dmin cognito group in order for the token to be accepted.
 
-```python
-import kittn
+`User` authentication means that the JWT token's sub must match the `uid`
+provided as a URL parameter in the request.
 
-api = kittn.authorize('meowmeowmeow')
-```
-
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
+`Authorization: AWS COGNITO JWS TOKEN`
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+You must replace <code>AWS COGNITO JWS TOKEN</code> with the session JWT Token.
 </aside>
 
-# Kittens
 
-## Get All Kittens
 
-```ruby
-require 'kittn'
+# Patients
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
 
-```python
-import kittn
+## List all patients
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
-
-> The above command returns JSON structured like this:
+> RESPONSE
 
 ```json
 [
   {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
+    "_id": {
+      "$oid": "DATABASE_GENERATED_ID"
+    },
+    "appointments": [],
+    "created": 1568478669.9997485,
+    "email": "USER_EMAIL",
+    "messages": [],
+    "object": "Patient",
+    "profile": {},
+    "uid": "AMAZON_COGNITO_SUB"
   },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
+  {...},
+  {...}
 ]
 ```
 
-This endpoint retrieves all kittens.
+### DESCRIPTION
+Returns a list of all of the patients.
 
-### HTTP Request
+### AUTHENTICATION
+`Administrator`
 
-`GET http://example.com/api/kittens`
+### HTTP ENDPOINT
+`GET /v1/patients`
 
-### Query Parameters
+### RETURNS
+A JSON list with all of your patients as seperate dictionaries. 
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
 
-## Get a Specific Kitten
 
-```ruby
-require 'kittn'
+## Retrieve a patient
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
-
-> The above command returns JSON structured like this:
+> RESPONSE
 
 ```json
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
+    "_id": {
+      "$oid": "DATABASE_GENERATED_ID"
+    },
+    "appointments": [],
+    "created": 1568478669.9997485,
+    "email": "USER_EMAIL",
+    "messages": [],
+    "object": "Patient",
+    "profile": {},
+    "uid": "AMS_COGNITO_SUB"
+  }
 ```
 
-This endpoint retrieves a specific kitten.
+### DESCRIPTION
+Returns the details of a specific customer. 
 
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+### AUTHENTICATION
+`User`
 
-### HTTP Request
+### HTTP ENDPOINT
+`GET /v1/patients/:uid`
 
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
+### URL PARAMETERS
 Parameter | Description
 --------- | -----------
-ID | The ID of the kitten to retrieve
+uid | The AWS Cognito SUB found in the JWT token
 
-## Delete a Specific Kitten
+### RETURNS
+JSON dictionary with all of the data inside of the patient object. 
 
-```ruby
-require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
 
-```python
-import kittn
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
+## Create a patient
 
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
+> POST /v1/patients
 
 ```json
 {
-  "id": 2,
-  "deleted" : ":("
+  "uid": "AMS_COGNITO_SUB",
+  "email": "USER_EMAIL"
 }
 ```
 
-This endpoint deletes a specific kitten.
+> RESPONSE
 
-### HTTP Request
+```json
+{
+    "_id": {
+      "$oid": "DATABASE_GENERATED_ID"
+    },
+    "appointments": [],
+    "created": 1568478669.9997485,
+    "email": "USER_EMAIL",
+    "messages": [],
+    "object": "Patient",
+    "profile": {},
+    "uid": "AMAZON_COGNITO_SUB"
+  }
+```
 
-`DELETE http://example.com/kittens/<ID>`
+### DESCRIPTION
+Creates a new patient inside of the system.
 
-### URL Parameters
+### AUTHENTICATION
+`User`
 
+### HTTP ENDPOINT
+`POST /v1/patients`
+
+### QUERY PARAMETERS
 Parameter | Description
 --------- | -----------
-ID | The ID of the kitten to delete
+uid | The AWS Cognito SUB found in the JWT token
+email | The email address associated with the user
+
+### RETURNS
+JSON dictionary with the data for that specific patient. It includes a `created`
+field which refers to the time in which the patient was created.
+
+
+
+
+
+## Update a patient
+
+> POST /v1/patients/:uid
+
+```json
+{
+    "_id": {
+      "$oid": "DATABASE_GENERATED_ID"
+    },
+    "appointments": [],
+    "created": 1568478669.9997485,
+    "email": "NEW_USER_EMAIL",
+    "messages": [],
+    "object": "Patient",
+    "profile": {},
+    "uid": "AMAZON_COGNITO_SUB"
+  }
+```
+
+> RESPONSE
+
+```json
+{
+    "_id": {
+      "$oid": "DATABASE_GENERATED_ID"
+    },
+    "appointments": [],
+    "created": 1568478669.9997485,
+    "email": "NEW_USER_EMAIL",
+    "messages": [],
+    "object": "Patient",
+    "profile": {},
+    "uid": "AMAZON_COGNITO_SUB"
+  }
+```
+
+### DESCRIPTION
+Updates a specific patient.
+
+### AUTHENTICATION
+`User`
+
+### HTTP ENDPOINT
+`POST /v1/patients/:uid`
+
+### URL PARAMETERS
+Parameter | Description
+--------- | -----------
+uid | The AWS Cognito SUB found in the JWT token
+
+### QUERY PARAMETERS
+This endpoint requires the entire patient profile object. If you do not have it,
+use the other endpoints to retrieve. It can then be updated and sent as the
+`JSON body` of this request.
+
+### RETURNS
+A JSON dictionary of the patient object which includes the new updates.
+
+
+
+## Delete a patient
+
+> RESPONSE
+
+```json
+{
+   "email": "USER_EMAIL",
+   "object": "Patient",
+   "deleted": true
+}
+```
+### DESCRIPTION
+Deletes a patient from the database.
+
+### AUTHENTICATION
+`User`
+
+### HTTP ENDPOINT
+`DELETE /v1/patients/:uid`
+
+### URL PARAMETERS
+Parameter | Description
+--------- | -----------
+uid | The AWS Cognito SUB found in the JWT token
+
+### RETURNS
+JSON confirmation which contains the patient's `email` and a `deleted` boolean
+which will be marked as `True`.
+
+
+
+
+## Retrieve a patient's profile
+
+> RESPONSE
+
+```json
+{
+  "health": {
+    "allergies": "",
+    "current_conditions": {
+      "acid_reflux": false,
+      "anemia": false,
+      "arthritis": false,
+      "artificial_heart_valve": false,
+      "artificial_joints": false,
+      "asthma": false,
+      "birth_control_pills": false,
+      "blood_disease": false,
+      "cancer": false,
+      "diabetes": false,
+      "dizziness": false,
+      "epilepsy": false,
+      "excessive_bleeding": false,
+      "fainting": false,
+      "headaches": false,
+      "heart_disease": false,
+      "hepatitis": false,
+      "high_blood_pressure": false,
+      "hiv_aids": false,
+      "jaw_pain": false,
+      "kidney_disease": false,
+      "liver_disease": false,
+      "mitral_valve_prolapse": false,
+      "nursing": false,
+      "pacemaker": false,
+      "pregnancy": false,
+      "radiation_treatment": false,
+      "rheumatic_fever": false,
+      "shortness_breath": false,
+      "sinus_problems": false,
+      "stomach_problems": false,
+      "stroke": false,
+      "swelling_feet": false,
+      "thyroid_problems": false,
+      "tobacco_habit": false,
+      "tonsillitis": false,
+      "tuberculosis": false,
+      "ulcers": false,
+      "venereal_disease": false
+    },
+    "medications": " "
+  },
+  "info": {
+    "address": {
+      "city": "",
+      "state": "",
+      "street": "",
+      "zip": ""
+    },
+    "date_of_birth": "",
+    "email": "",
+    "emergency_contact": "",
+    "emergency_phone": "",
+    "emergency_relation": "",
+    "first_name": "",
+    "gender": "",
+    "home_phone": "",
+    "last_name": "",
+    "mobile_phone": "",
+    "relationship_status": "",
+    "work_ext": " ",
+    "work_phone": ""
+  },
+  "insurance": {
+    "primary": {
+      "employer": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "name": ""
+      },
+      "group_number": "",
+      "id_number": "",
+      "insurer": {
+        "name": "",
+        "payer_id": ""
+      },
+      "name_of_insured": {
+        "date_of_birth": "",
+        "name": "",
+        "name_option": "",
+        "relation": ""
+      },
+      "plan": ""
+    },
+    "secondary": {
+      "employer": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "name": ""
+      },
+      "group_number": "",
+      "id_number": "",
+      "insurer": {
+        "name": "",
+        "payer_id": ""
+      },
+      "name_of_insured": {
+        "date_of_birth": "",
+        "name": "",
+        "name_option": "",
+        "relation": ""
+      },
+      "plan": ""
+    }
+  },
+  "responsible_party": {
+    "address": {
+      "city": "",
+      "state": "",
+      "street": "",
+      "zip": ""
+    },
+    "date_of_birth": "",
+    "email": "",
+    "first_name": "",
+    "gender": "",
+    "home_phone": "",
+    "last_name": "",
+    "mobile_phone": "",
+    "relationship_to_patient": "",
+    "work_ext": "",
+    "work_phone": ""
+  }
+}
+```
+
+### DESCRIPTION
+Returns the entire profile of a patient. 
+
+### AUTHENTICATION
+`User`
+
+### HTTP ENDPOINT
+`GET /v1/patients/:uid/profile`
+
+### URL PARAMETERS
+Parameter | Description
+--------- | -----------
+uid | The AWS Cognito SUB found in the JWT token
+
+### RETURNS
+JSON dictionary containing the profile for a patient. 
+
+
+
+## Create a patient's profile
+
+> POST /v1/patients/:uid/profile
+
+```json
+{
+  "health": {
+    "allergies": "",
+    "current_conditions": {
+      "acid_reflux": false,
+      "anemia": false,
+      "arthritis": false,
+      "artificial_heart_valve": false,
+      "artificial_joints": false,
+      "asthma": false,
+      "birth_control_pills": false,
+      "blood_disease": false,
+      "cancer": false,
+      "diabetes": false,
+      "dizziness": false,
+      "epilepsy": false,
+      "excessive_bleeding": false,
+      "fainting": false,
+      "headaches": false,
+      "heart_disease": false,
+      "hepatitis": false,
+      "high_blood_pressure": false,
+      "hiv_aids": false,
+      "jaw_pain": false,
+      "kidney_disease": false,
+      "liver_disease": false,
+      "mitral_valve_prolapse": false,
+      "nursing": false,
+      "pacemaker": false,
+      "pregnancy": false,
+      "radiation_treatment": false,
+      "rheumatic_fever": false,
+      "shortness_breath": false,
+      "sinus_problems": false,
+      "stomach_problems": false,
+      "stroke": false,
+      "swelling_feet": false,
+      "thyroid_problems": false,
+      "tobacco_habit": false,
+      "tonsillitis": false,
+      "tuberculosis": false,
+      "ulcers": false,
+      "venereal_disease": false
+    },
+    "medications": " "
+  },
+  "info": {
+    "address": {
+      "city": "",
+      "state": "",
+      "street": "",
+      "zip": ""
+    },
+    "date_of_birth": "",
+    "email": "",
+    "emergency_contact": "",
+    "emergency_phone": "",
+    "emergency_relation": "",
+    "first_name": "",
+    "gender": "",
+    "home_phone": "",
+    "last_name": "",
+    "mobile_phone": "",
+    "relationship_status": "",
+    "work_ext": " ",
+    "work_phone": ""
+  },
+  "insurance": {
+    "primary": {
+      "employer": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "name": ""
+      },
+      "group_number": "",
+      "id_number": "",
+      "insurer": {
+        "name": "",
+        "payer_id": ""
+      },
+      "name_of_insured": {
+        "date_of_birth": "",
+        "name": "",
+        "name_option": "",
+        "relation": ""
+      },
+      "plan": ""
+    },
+    "secondary": {
+      "employer": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "name": ""
+      },
+      "group_number": "",
+      "id_number": "",
+      "insurer": {
+        "name": "",
+        "payer_id": ""
+      },
+      "name_of_insured": {
+        "date_of_birth": "",
+        "name": "",
+        "name_option": "",
+        "relation": ""
+      },
+      "plan": ""
+    }
+  },
+  "responsible_party": {
+    "address": {
+      "city": "",
+      "state": "",
+      "street": "",
+      "zip": ""
+    },
+    "date_of_birth": "",
+    "email": "",
+    "first_name": "",
+    "gender": "",
+    "home_phone": "",
+    "last_name": "",
+    "mobile_phone": "",
+    "relationship_to_patient": "",
+    "work_ext": "",
+    "work_phone": ""
+  }
+}
+```
+
+> RESPONSE
+
+```json
+{
+    "_id": {
+      "$oid": "DATABASE_GENERATED_ID"
+    },
+    "appointments": [],
+    "created": 1568478669.9997485,
+    "email": "USER_EMAIL",
+    "messages": [],
+    "object": "Patient",
+    "profile": {
+      "health": {
+        "allergies": "",
+        "current_conditions": {
+          "acid_reflux": false,
+          "anemia": false,
+          "arthritis": false,
+          "artificial_heart_valve": false,
+          "artificial_joints": false,
+          "asthma": false,
+          "birth_control_pills": false,
+          "blood_disease": false,
+          "cancer": false,
+          "diabetes": false,
+          "dizziness": false,
+          "epilepsy": false,
+          "excessive_bleeding": false,
+          "fainting": false,
+          "headaches": false,
+          "heart_disease": false,
+          "hepatitis": false,
+          "high_blood_pressure": false,
+          "hiv_aids": false,
+          "jaw_pain": false,
+          "kidney_disease": false,
+          "liver_disease": false,
+          "mitral_valve_prolapse": false,
+          "nursing": false,
+          "pacemaker": false,
+          "pregnancy": false,
+          "radiation_treatment": false,
+          "rheumatic_fever": false,
+          "shortness_breath": false,
+          "sinus_problems": false,
+          "stomach_problems": false,
+          "stroke": false,
+          "swelling_feet": false,
+          "thyroid_problems": false,
+          "tobacco_habit": false,
+          "tonsillitis": false,
+          "tuberculosis": false,
+          "ulcers": false,
+          "venereal_disease": false
+        },
+        "medications": " "
+      },
+      "info": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "date_of_birth": "",
+        "email": "",
+        "emergency_contact": "",
+        "emergency_phone": "",
+        "emergency_relation": "",
+        "first_name": "",
+        "gender": "",
+        "home_phone": "",
+        "last_name": "",
+        "mobile_phone": "",
+        "relationship_status": "",
+        "work_ext": " ",
+        "work_phone": ""
+      },
+      "insurance": {
+        "primary": {
+          "employer": {
+            "address": {
+              "city": "",
+              "state": "",
+              "street": "",
+              "zip": ""
+            },
+            "name": ""
+          },
+          "group_number": "",
+          "id_number": "",
+          "insurer": {
+            "name": "",
+            "payer_id": ""
+          },
+          "name_of_insured": {
+            "date_of_birth": "",
+            "name": "",
+            "name_option": "",
+            "relation": ""
+          },
+          "plan": ""
+        },
+        "secondary": {
+          "employer": {
+            "address": {
+              "city": "",
+              "state": "",
+              "street": "",
+              "zip": ""
+            },
+            "name": ""
+          },
+          "group_number": "",
+          "id_number": "",
+          "insurer": {
+            "name": "",
+            "payer_id": ""
+          },
+          "name_of_insured": {
+            "date_of_birth": "",
+            "name": "",
+            "name_option": "",
+            "relation": ""
+          },
+          "plan": ""
+        }
+      },
+      "responsible_party": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "date_of_birth": "",
+        "email": "",
+        "first_name": "",
+        "gender": "",
+        "home_phone": "",
+        "last_name": "",
+        "mobile_phone": "",
+        "relationship_to_patient": "",
+        "work_ext": "",
+        "work_phone": ""
+      }
+    },
+    "uid": "AMS_COGNITO_SUB"
+  }
+```
+
+
+### DESCRIPTION
+Creates a profile for a specific patient.
+
+### AUTHENTICATION
+`User`
+
+### HTTP ENDPOINT
+`POST /v1/patients/:uid/profile`
+
+### URL PARAMETERS
+Parameter | Description
+--------- | -----------
+uid | The AWS Cognito SUB found in the JWT token
+
+### QUERY PARAMETERS
+Requries the entire profile object. The example `POST JSON` can be used to test
+with.
+
+### RETURNS
+The patient object as a `JSON` dictionary. It contains the new patient profile
+under the `profile` key.
+
+
+
+## Update a patient's profile
+
+> POST /v1/patients/:uid/profile
+
+```json
+{
+  "health": {
+    "allergies": "",
+    "current_conditions": {
+      "acid_reflux": false,
+      "anemia": false,
+      "arthritis": false,
+      "artificial_heart_valve": false,
+      "artificial_joints": false,
+      "asthma": false,
+      "birth_control_pills": false,
+      "blood_disease": false,
+      "cancer": false,
+      "diabetes": false,
+      "dizziness": false,
+      "epilepsy": false,
+      "excessive_bleeding": false,
+      "fainting": false,
+      "headaches": false,
+      "heart_disease": false,
+      "hepatitis": false,
+      "high_blood_pressure": false,
+      "hiv_aids": false,
+      "jaw_pain": false,
+      "kidney_disease": false,
+      "liver_disease": false,
+      "mitral_valve_prolapse": false,
+      "nursing": false,
+      "pacemaker": false,
+      "pregnancy": false,
+      "radiation_treatment": false,
+      "rheumatic_fever": false,
+      "shortness_breath": false,
+      "sinus_problems": false,
+      "stomach_problems": false,
+      "stroke": false,
+      "swelling_feet": false,
+      "thyroid_problems": false,
+      "tobacco_habit": false,
+      "tonsillitis": false,
+      "tuberculosis": false,
+      "ulcers": false,
+      "venereal_disease": false
+    },
+    "medications": " "
+  },
+  "info": {
+    "address": {
+      "city": "",
+      "state": "",
+      "street": "",
+      "zip": ""
+    },
+    "date_of_birth": "",
+    "email": "",
+    "emergency_contact": "",
+    "emergency_phone": "",
+    "emergency_relation": "",
+    "first_name": "",
+    "gender": "",
+    "home_phone": "",
+    "last_name": "",
+    "mobile_phone": "",
+    "relationship_status": "",
+    "work_ext": " ",
+    "work_phone": ""
+  },
+  "insurance": {
+    "primary": {
+      "employer": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "name": ""
+      },
+      "group_number": "",
+      "id_number": "",
+      "insurer": {
+        "name": "",
+        "payer_id": ""
+      },
+      "name_of_insured": {
+        "date_of_birth": "",
+        "name": "",
+        "name_option": "",
+        "relation": ""
+      },
+      "plan": ""
+    },
+    "secondary": {
+      "employer": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "name": ""
+      },
+      "group_number": "",
+      "id_number": "",
+      "insurer": {
+        "name": "",
+        "payer_id": ""
+      },
+      "name_of_insured": {
+        "date_of_birth": "",
+        "name": "",
+        "name_option": "",
+        "relation": ""
+      },
+      "plan": ""
+    }
+  },
+  "responsible_party": {
+    "address": {
+      "city": "",
+      "state": "",
+      "street": "",
+      "zip": ""
+    },
+    "date_of_birth": "",
+    "email": "",
+    "first_name": "",
+    "gender": "",
+    "home_phone": "",
+    "last_name": "",
+    "mobile_phone": "",
+    "relationship_to_patient": "",
+    "work_ext": "",
+    "work_phone": ""
+  }
+}
+```
+
+> RESPONSE
+
+```json
+{
+    "_id": {
+      "$oid": "DATABASE_GENERATED_ID"
+    },
+    "appointments": [],
+    "created": 1568478669.9997485,
+    "email": "USER_EMAIL",
+    "messages": [],
+    "object": "Patient",
+    "profile": {
+      "health": {
+        "allergies": "",
+        "current_conditions": {
+          "acid_reflux": false,
+          "anemia": false,
+          "arthritis": false,
+          "artificial_heart_valve": false,
+          "artificial_joints": false,
+          "asthma": false,
+          "birth_control_pills": false,
+          "blood_disease": false,
+          "cancer": false,
+          "diabetes": false,
+          "dizziness": false,
+          "epilepsy": false,
+          "excessive_bleeding": false,
+          "fainting": false,
+          "headaches": false,
+          "heart_disease": false,
+          "hepatitis": false,
+          "high_blood_pressure": false,
+          "hiv_aids": false,
+          "jaw_pain": false,
+          "kidney_disease": false,
+          "liver_disease": false,
+          "mitral_valve_prolapse": false,
+          "nursing": false,
+          "pacemaker": false,
+          "pregnancy": false,
+          "radiation_treatment": false,
+          "rheumatic_fever": false,
+          "shortness_breath": false,
+          "sinus_problems": false,
+          "stomach_problems": false,
+          "stroke": false,
+          "swelling_feet": false,
+          "thyroid_problems": false,
+          "tobacco_habit": false,
+          "tonsillitis": false,
+          "tuberculosis": false,
+          "ulcers": false,
+          "venereal_disease": false
+        },
+        "medications": " "
+      },
+      "info": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "date_of_birth": "",
+        "email": "",
+        "emergency_contact": "",
+        "emergency_phone": "",
+        "emergency_relation": "",
+        "first_name": "",
+        "gender": "",
+        "home_phone": "",
+        "last_name": "",
+        "mobile_phone": "",
+        "relationship_status": "",
+        "work_ext": " ",
+        "work_phone": ""
+      },
+      "insurance": {
+        "primary": {
+          "employer": {
+            "address": {
+              "city": "",
+              "state": "",
+              "street": "",
+              "zip": ""
+            },
+            "name": ""
+          },
+          "group_number": "",
+          "id_number": "",
+          "insurer": {
+            "name": "",
+            "payer_id": ""
+          },
+          "name_of_insured": {
+            "date_of_birth": "",
+            "name": "",
+            "name_option": "",
+            "relation": ""
+          },
+          "plan": ""
+        },
+        "secondary": {
+          "employer": {
+            "address": {
+              "city": "",
+              "state": "",
+              "street": "",
+              "zip": ""
+            },
+            "name": ""
+          },
+          "group_number": "",
+          "id_number": "",
+          "insurer": {
+            "name": "",
+            "payer_id": ""
+          },
+          "name_of_insured": {
+            "date_of_birth": "",
+            "name": "",
+            "name_option": "",
+            "relation": ""
+          },
+          "plan": ""
+        }
+      },
+      "responsible_party": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "date_of_birth": "",
+        "email": "",
+        "first_name": "",
+        "gender": "",
+        "home_phone": "",
+        "last_name": "",
+        "mobile_phone": "",
+        "relationship_to_patient": "",
+        "work_ext": "",
+        "work_phone": ""
+      }
+    },
+    "uid": "AMS_COGNITO_SUB"
+  }
+```
+
+### DESCRIPTION
+Updates the entire profile for a specific patient.
+
+### AUTHENTICATION
+`User`
+
+### HTTP ENDPOINT
+`POST /v1/patients/:uid/profile`
+
+### URL PARAMETERS
+Parameter | Description
+--------- | -----------
+uid | The AWS Cognito SUB found in the JWT token
+
+### QUERY PARAMETERS
+Requries the entire profile object. If you do not have it, use the other 
+endpoints to retrieve it. Once edited, provide the entire object in the 
+`POST request`.
+
+### RETURNS
+The patient object as a `JSON` dictionary. It contains the newly updated patient
+profile under the `profile` key.
+
+
+
+## Retrieve patient's profile section
+
+> RESPONSE FOR INFO
+
+```json
+{
+    "address": {
+      "city": "",
+      "state": "",
+      "street": "",
+      "zip": ""
+    },
+    "date_of_birth": "",
+    "email": "",
+    "emergency_contact": "",
+    "emergency_phone": "",
+    "emergency_relation": "",
+    "first_name": "",
+    "gender": "",
+    "home_phone": "",
+    "last_name": "",
+    "mobile_phone": "",
+    "relationship_status": "",
+    "work_ext": " ",
+    "work_phone": ""
+}
+```
+
+> RESPONSE FOR RESPONSIBLE PARTY
+
+```json
+{
+    "address": {
+      "city": "",
+      "state": "",
+      "street": "",
+      "zip": ""
+    },
+    "date_of_birth": "",
+    "email": "",
+    "first_name": "",
+    "gender": "",
+    "home_phone": "",
+    "last_name": "",
+    "mobile_phone": "",
+    "relationship_to_patient": "",
+    "work_ext": "",
+    "work_phone": ""
+  }
+}
+```
+
+> RESPONSE FOR INSURANCE
+
+```json
+{
+    "primary": {
+      "employer": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "name": ""
+      },
+      "group_number": "",
+      "id_number": "",
+      "insurer": {
+        "name": "",
+        "payer_id": ""
+      },
+      "name_of_insured": {
+        "date_of_birth": "",
+        "name": "",
+        "name_option": "",
+        "relation": ""
+      },
+      "plan": ""
+    },
+    "secondary": {
+      "employer": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "name": ""
+      },
+      "group_number": "",
+      "id_number": "",
+      "insurer": {
+        "name": "",
+        "payer_id": ""
+      },
+      "name_of_insured": {
+        "date_of_birth": "",
+        "name": "",
+        "name_option": "",
+        "relation": ""
+      },
+      "plan": ""
+    }
+ }
+```
+
+> RESPONSE FOR HEALTH
+
+```json
+{
+    "allergies": "",
+    "current_conditions": {
+      "acid_reflux": false,
+      "anemia": false,
+      "arthritis": false,
+      "artificial_heart_valve": false,
+      "artificial_joints": false,
+      "asthma": false,
+      "birth_control_pills": false,
+      "blood_disease": false,
+      "cancer": false,
+      "diabetes": false,
+      "dizziness": false,
+      "epilepsy": false,
+      "excessive_bleeding": false,
+      "fainting": false,
+      "headaches": false,
+      "heart_disease": false,
+      "hepatitis": false,
+      "high_blood_pressure": false,
+      "hiv_aids": false,
+      "jaw_pain": false,
+      "kidney_disease": false,
+      "liver_disease": false,
+      "mitral_valve_prolapse": false,
+      "nursing": false,
+      "pacemaker": false,
+      "pregnancy": false,
+      "radiation_treatment": false,
+      "rheumatic_fever": false,
+      "shortness_breath": false,
+      "sinus_problems": false,
+      "stomach_problems": false,
+      "stroke": false,
+      "swelling_feet": false,
+      "thyroid_problems": false,
+      "tobacco_habit": false,
+      "tonsillitis": false,
+      "tuberculosis": false,
+      "ulcers": false,
+      "venereal_disease": false
+    },
+    "medications": " "
+}
+```
+
+### DESCRIPTION
+Returns a specific section of a patient's profile.
+
+### HTTP ENDPOINT
+`GET /v1/patients/:uid/profile/:section`
+
+### AUTHENTICATION
+`User`
+
+### URL PARAMETERS
+Parameter | Description
+--------- | -----------
+uid | The AWS Cognito SUB found in the JWT token
+section | info
+        | responsible_party
+        | insurance
+        | health
+
+### RETURNS
+The specific section as a `JSON` dictionary. 
+
+
+
+## Update a patient's profile section
+
+> POST /v1/patients/:uid/profile/info
+
+```json
+{
+    "address": {
+      "city": "",
+      "state": "",
+      "street": "",
+      "zip": ""
+    },
+    "date_of_birth": "",
+    "email": "",
+    "emergency_contact": "",
+    "emergency_phone": "",
+    "emergency_relation": "",
+    "first_name": "",
+    "gender": "",
+    "home_phone": "",
+    "last_name": "",
+    "mobile_phone": "",
+    "relationship_status": "",
+    "work_ext": " ",
+    "work_phone": ""
+}
+```
+
+> POST /v1/patients/:uid/profile/responsible_party
+
+```json
+{
+    "address": {
+      "city": "",
+      "state": "",
+      "street": "",
+      "zip": ""
+    },
+    "date_of_birth": "",
+    "email": "",
+    "first_name": "",
+    "gender": "",
+    "home_phone": "",
+    "last_name": "",
+    "mobile_phone": "",
+    "relationship_to_patient": "",
+    "work_ext": "",
+    "work_phone": ""
+  }
+}
+```
+
+> POST /v1/patients/:uid/profile/insurance
+
+```json
+{
+    "primary": {
+      "employer": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "name": ""
+      },
+      "group_number": "",
+      "id_number": "",
+      "insurer": {
+        "name": "",
+        "payer_id": ""
+      },
+      "name_of_insured": {
+        "date_of_birth": "",
+        "name": "",
+        "name_option": "",
+        "relation": ""
+      },
+      "plan": ""
+    },
+    "secondary": {
+      "employer": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "name": ""
+      },
+      "group_number": "",
+      "id_number": "",
+      "insurer": {
+        "name": "",
+        "payer_id": ""
+      },
+      "name_of_insured": {
+        "date_of_birth": "",
+        "name": "",
+        "name_option": "",
+        "relation": ""
+      },
+      "plan": ""
+    }
+ }
+```
+
+> POST /v1/patients/:uid/profile/health
+
+```json
+{
+    "allergies": "",
+    "current_conditions": {
+      "acid_reflux": false,
+      "anemia": false,
+      "arthritis": false,
+      "artificial_heart_valve": false,
+      "artificial_joints": false,
+      "asthma": false,
+      "birth_control_pills": false,
+      "blood_disease": false,
+      "cancer": false,
+      "diabetes": false,
+      "dizziness": false,
+      "epilepsy": false,
+      "excessive_bleeding": false,
+      "fainting": false,
+      "headaches": false,
+      "heart_disease": false,
+      "hepatitis": false,
+      "high_blood_pressure": false,
+      "hiv_aids": false,
+      "jaw_pain": false,
+      "kidney_disease": false,
+      "liver_disease": false,
+      "mitral_valve_prolapse": false,
+      "nursing": false,
+      "pacemaker": false,
+      "pregnancy": false,
+      "radiation_treatment": false,
+      "rheumatic_fever": false,
+      "shortness_breath": false,
+      "sinus_problems": false,
+      "stomach_problems": false,
+      "stroke": false,
+      "swelling_feet": false,
+      "thyroid_problems": false,
+      "tobacco_habit": false,
+      "tonsillitis": false,
+      "tuberculosis": false,
+      "ulcers": false,
+      "venereal_disease": false
+    },
+    "medications": " "
+}
+```
+
+> RESPONSE
+
+```json
+{
+    "_id": {
+      "$oid": "DATABASE_GENERATED_ID"
+    },
+    "appointments": [],
+    "created": 1568478669.9997485,
+    "email": "USER_EMAIL",
+    "messages": [],
+    "object": "Patient",
+    "profile": {
+      "health": {
+        "allergies": "",
+        "current_conditions": {
+          "acid_reflux": false,
+          "anemia": false,
+          "arthritis": false,
+          "artificial_heart_valve": false,
+          "artificial_joints": false,
+          "asthma": false,
+          "birth_control_pills": false,
+          "blood_disease": false,
+          "cancer": false,
+          "diabetes": false,
+          "dizziness": false,
+          "epilepsy": false,
+          "excessive_bleeding": false,
+          "fainting": false,
+          "headaches": false,
+          "heart_disease": false,
+          "hepatitis": false,
+          "high_blood_pressure": false,
+          "hiv_aids": false,
+          "jaw_pain": false,
+          "kidney_disease": false,
+          "liver_disease": false,
+          "mitral_valve_prolapse": false,
+          "nursing": false,
+          "pacemaker": false,
+          "pregnancy": false,
+          "radiation_treatment": false,
+          "rheumatic_fever": false,
+          "shortness_breath": false,
+          "sinus_problems": false,
+          "stomach_problems": false,
+          "stroke": false,
+          "swelling_feet": false,
+          "thyroid_problems": false,
+          "tobacco_habit": false,
+          "tonsillitis": false,
+          "tuberculosis": false,
+          "ulcers": false,
+          "venereal_disease": false
+        },
+        "medications": " "
+      },
+      "info": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "date_of_birth": "",
+        "email": "",
+        "emergency_contact": "",
+        "emergency_phone": "",
+        "emergency_relation": "",
+        "first_name": "",
+        "gender": "",
+        "home_phone": "",
+        "last_name": "",
+        "mobile_phone": "",
+        "relationship_status": "",
+        "work_ext": " ",
+        "work_phone": ""
+      },
+      "insurance": {
+        "primary": {
+          "employer": {
+            "address": {
+              "city": "",
+              "state": "",
+              "street": "",
+              "zip": ""
+            },
+            "name": ""
+          },
+          "group_number": "",
+          "id_number": "",
+          "insurer": {
+            "name": "",
+            "payer_id": ""
+          },
+          "name_of_insured": {
+            "date_of_birth": "",
+            "name": "",
+            "name_option": "",
+            "relation": ""
+          },
+          "plan": ""
+        },
+        "secondary": {
+          "employer": {
+            "address": {
+              "city": "",
+              "state": "",
+              "street": "",
+              "zip": ""
+            },
+            "name": ""
+          },
+          "group_number": "",
+          "id_number": "",
+          "insurer": {
+            "name": "",
+            "payer_id": ""
+          },
+          "name_of_insured": {
+            "date_of_birth": "",
+            "name": "",
+            "name_option": "",
+            "relation": ""
+          },
+          "plan": ""
+        }
+      },
+      "responsible_party": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "date_of_birth": "",
+        "email": "",
+        "first_name": "",
+        "gender": "",
+        "home_phone": "",
+        "last_name": "",
+        "mobile_phone": "",
+        "relationship_to_patient": "",
+        "work_ext": "",
+        "work_phone": ""
+      }
+    },
+    "uid": "AMS_COGNITO_SUB"
+  }
+```
+
+
+### DESCRIPTION
+Updates a specific section of a patient's profile.
+
+### HTTP ENDPOINT
+`POST /v1/patients/:uid/profile/:section`
+
+### AUTHENTICATION
+`User`
+
+### URL PARAMETERS
+Parameter | Description
+--------- | -----------
+uid | The AWS Cognito SUB found in the JWT token
+section | info
+        | responsible_party
+        | insurance
+        | health
+
+### RETURNS
+The entire patient object as a `JSON` dictionary. It includes the newly updated
+data.
+
+
+
+## Retrieve a patient's messages
+
+> RESPONSE
+
+```json
+[
+    {
+    "created": 1568647703.4027293,
+    "dentist": "",
+    "text": ""
+    },
+    {...},
+    {...}
+]
+```
+
+### DESCRIPTION
+Returns a list of a patient's messages
+
+### HTTP ENDPOINT
+`GET /v1/patients/:uid/messages`
+
+### AUTHENTICATION
+`User`
+
+### URL PARAMETERS
+Parameter | Description
+--------- | -----------
+uid | The AWS Cognito SUB found in the JWT token
+
+### RETURNS
+A `JSON` list of a patient's messages.
+
+
+## Create a patient's message
+
+> POST /v1/patients/:uid/messages
+
+```json
+{
+    "dentist": "",
+    "text": ""
+}
+``` 
+
+> RESPONSE
+
+```json
+{
+    "_id": {
+      "$oid": "DATABASE_GENERATED_ID"
+    },
+    "appointments": [],
+    "created": 1568478669.9997485,
+    "email": "USER_EMAIL",
+    "messages": [
+        {
+            "dentist": "",
+            "text": ""
+        }
+    ],
+    "object": "Patient",
+    "profile": {
+      "health": {
+        "allergies": "",
+        "current_conditions": {
+          "acid_reflux": false,
+          "anemia": false,
+          "arthritis": false,
+          "artificial_heart_valve": false,
+          "artificial_joints": false,
+          "asthma": false,
+          "birth_control_pills": false,
+          "blood_disease": false,
+          "cancer": false,
+          "diabetes": false,
+          "dizziness": false,
+          "epilepsy": false,
+          "excessive_bleeding": false,
+          "fainting": false,
+          "headaches": false,
+          "heart_disease": false,
+          "hepatitis": false,
+          "high_blood_pressure": false,
+          "hiv_aids": false,
+          "jaw_pain": false,
+          "kidney_disease": false,
+          "liver_disease": false,
+          "mitral_valve_prolapse": false,
+          "nursing": false,
+          "pacemaker": false,
+          "pregnancy": false,
+          "radiation_treatment": false,
+          "rheumatic_fever": false,
+          "shortness_breath": false,
+          "sinus_problems": false,
+          "stomach_problems": false,
+          "stroke": false,
+          "swelling_feet": false,
+          "thyroid_problems": false,
+          "tobacco_habit": false,
+          "tonsillitis": false,
+          "tuberculosis": false,
+          "ulcers": false,
+          "venereal_disease": false
+        },
+        "medications": " "
+      },
+      "info": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "date_of_birth": "",
+        "email": "",
+        "emergency_contact": "",
+        "emergency_phone": "",
+        "emergency_relation": "",
+        "first_name": "",
+        "gender": "",
+        "home_phone": "",
+        "last_name": "",
+        "mobile_phone": "",
+        "relationship_status": "",
+        "work_ext": " ",
+        "work_phone": ""
+      },
+      "insurance": {
+        "primary": {
+          "employer": {
+            "address": {
+              "city": "",
+              "state": "",
+              "street": "",
+              "zip": ""
+            },
+            "name": ""
+          },
+          "group_number": "",
+          "id_number": "",
+          "insurer": {
+            "name": "",
+            "payer_id": ""
+          },
+          "name_of_insured": {
+            "date_of_birth": "",
+            "name": "",
+            "name_option": "",
+            "relation": ""
+          },
+          "plan": ""
+        },
+        "secondary": {
+          "employer": {
+            "address": {
+              "city": "",
+              "state": "",
+              "street": "",
+              "zip": ""
+            },
+            "name": ""
+          },
+          "group_number": "",
+          "id_number": "",
+          "insurer": {
+            "name": "",
+            "payer_id": ""
+          },
+          "name_of_insured": {
+            "date_of_birth": "",
+            "name": "",
+            "name_option": "",
+            "relation": ""
+          },
+          "plan": ""
+        }
+      },
+      "responsible_party": {
+        "address": {
+          "city": "",
+          "state": "",
+          "street": "",
+          "zip": ""
+        },
+        "date_of_birth": "",
+        "email": "",
+        "first_name": "",
+        "gender": "",
+        "home_phone": "",
+        "last_name": "",
+        "mobile_phone": "",
+        "relationship_to_patient": "",
+        "work_ext": "",
+        "work_phone": ""
+      }
+    },
+    "uid": "AMS_COGNITO_SUB"
+  }
+```
+
+
+### DESCRIPTION
+Creates a new message for a patient that the dentist will be able to read and
+response too.
+
+### HTTP ENDPOINT
+`POST /v1/patients/:uid/messages`
+
+### AUTHENTICATION
+`User`
+
+### URL PARAMETERS
+Parameter | Description
+--------- | -----------
+uid | The AWS Cognito SUB found in the JWT token
+
+### QUERY PARAMETERS
+The entire message object is required as a `JSON POST request`.
+
+### RETURNS
+A `JSON` dictionary of the entire patient object. It includes the newly created
+message.
+
 
